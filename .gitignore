@@ -1,0 +1,16 @@
+
+.env
+
+.venv/
+
+src/__pycache__/
+
+src/utils/__pycache__/
+
+src/routes/__pycache__/
+
+src/models/entities/__pycache__/
+
+src/models/__pycache__/
+
+src/database/__pycache__/

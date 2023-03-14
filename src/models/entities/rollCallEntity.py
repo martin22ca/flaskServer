@@ -1,20 +1,20 @@
 from utils.DateFormat import DateFormat
 
+class RollCall():
 
-class rollCall():
-
-    def __init__(self, id, idClass, idClassroom, closingTime, edited=False, idEmployee=None) -> None:
+    def __init__(self, id, idClassroom,rollDate, idStudentClass=None, closeTime=None) -> None:
         self.id = id
-        self.idClass = idClass
+        self.idStudentClass = idStudentClass
         self.idClassroom = idClassroom
-        self.closingTime = closingTime
-        self.edited = edited,
-        self.idEmployee = idEmployee
+        self.idClassroom = idClassroom
+        self.rollDate = rollDate
+        self.closeTime = closeTime
 
     def toJSON(self):
         return {
             "id": self.id,
-            "idClass": self.idClass,
+            "idClass": self.idStudentClass,
             "idClassroom": self.idClassroom,
-            "closingTime": self.closingTime,
+            "closingTime": self.closeTime,
+            "rollDate": self.rollDate
         }

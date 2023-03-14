@@ -1,6 +1,5 @@
 import datetime
 
-
 class DateFormat():
 
     @classmethod

@@ -1,8 +1,7 @@
 from flask import Blueprint, jsonify, request
-import uuid
 
 # Entities
-from models.entities.studentEntity import student
+from models.entities.studentEntity import Student
 
 # Models
 from models.studentModel import studentModel

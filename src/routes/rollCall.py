@@ -9,15 +9,6 @@ from models.entities.rollCallEntity import RollCall
 from models.rollCallModel import rollCallModel
 
 main = Blueprint('rollCallBlueprint', __name__)
-
-@main.route('/')
-def getRollCalls():
-    try:
-        calls = rollCallModel.getRollCalls()
-        return jsonify(calls)
-    
-    except Exception as ex:
-        return jsonify({'message': str(ex)}), 500
     
 @main.route('/today/<idClassStud>')
 def getRollCallToday(idClassStud):

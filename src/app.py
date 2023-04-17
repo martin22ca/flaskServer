@@ -2,18 +2,16 @@ import uuid
 import socket
 from flask import Flask
 from config import config
-from flask_cors import CORS
 from managerLib.sheduler import BackgroundManager 
 from zeroconf import Zeroconf, ServiceInfo
 
 # Routes
-from routes import rollCall, attendeces,classroom
+from routes import  attendeces,classroom
 
 app = Flask(__name__)
 
 def page_not_found(error):
     return "<h1>URL Not found</h1>", 404
-
 
 ip_address = socket.gethostbyname(socket.gethostname()+".local")
 info = ServiceInfo(
@@ -31,7 +29,6 @@ if __name__ == '__main__':
     app.config.from_object(config['development'])
 
     # Blueprints
-    app.register_blueprint(rollCall.main, url_prefix='/rollCall')
     app.register_blueprint(attendeces.main, url_prefix='/attendece')
     app.register_blueprint(classroom.main, url_prefix='/classroom')
 

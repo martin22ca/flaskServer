@@ -25,8 +25,7 @@ def postNewAttendece():
         certainty = req['certainty']*100
         idStudent = req['studentId']
         timeArrival = req['timeOfEntry']
-        present = True
-        msg = attendenceModel.createAttendence(idClassroom,idStudent,certainty,timeArrival,present,imgBytes)
+        msg = attendenceModel.createAttendence(idClassroom,idStudent,certainty,timeArrival,imgBytes)
 
         return jsonify({'message':msg},200)
     except Exception as ex:

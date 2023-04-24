@@ -34,7 +34,7 @@ class attendenceModel():
 
                 cursor.execute(
                     "SELECT id,id_student,att_date FROM attendences WHERE id_student = %s AND att_date = %s", (idStudent, today,))
-                alreadyIn = cursor.fetchone()[0]
+                alreadyIn = cursor.fetchone()
                 if alreadyIn == None:
                     cursor.execute("INSERT INTO attendences (id_student,time_arrival,present,late,certainty,img_encoded,id_classroom,att_date) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
                                    (idStudent, timeArrival, True, late, certainty, imgBytes, idClassroom, today,))
@@ -42,8 +42,9 @@ class attendenceModel():
                     connection.close()
                     return 'New Attendence'
                 else:
+                    attId = alreadyIn[0]
                     cursor.execute("UPDATE attendences SET time_arrival = %s,present =%s ,late =%s ,certainty = %s,img_encoded = %s where id = %s",
-                                   (timeArrival, True, late, certainty, imgBytes, alreadyIn,))
+                                   (timeArrival, True, late, certainty, imgBytes, attId,))
                     connection.commit()
 
                     connection.close()

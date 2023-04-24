@@ -22,7 +22,7 @@ def postNewAttendece():
         imgStr = req['image']
         imgBytes = b64decode(imgStr)
         idClassroom = req['idClassroom']
-        certainty = req['certainty']*100
+        certainty = req['certainty']
         idStudent = req['studentId']
         timeArrival = req['timeOfEntry']
         msg = attendenceModel.createAttendence(idClassroom,idStudent,certainty,timeArrival,imgBytes)

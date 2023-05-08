@@ -37,3 +37,4 @@ class classModel():
         except Exception as ex:
             print(ex)
             raise Exception(ex)
+        

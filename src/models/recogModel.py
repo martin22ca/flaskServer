@@ -1,6 +1,7 @@
 from database.db import getConnection
 from psycopg2 import Binary
 
+
 class recogModel():
 
     @classmethod
@@ -9,7 +10,7 @@ class recogModel():
             connection = getConnection()
             with connection.cursor() as cursor:
 
-                cursor.execute("select * from recog r where r.status = 1")
+                cursor.execute("select * from ai_data r where r.status = 1")
 
                 connection.commit()
                 connection.close()
@@ -53,8 +54,8 @@ class recogModel():
             connection = getConnection()
             with connection.cursor() as cursor:
 
-                # Insert the pickled objects into the database
-                cursor.execute("update recog set status = 2 where status = 1")
+                cursor.execute(
+                    "update ai_data set status = 2 where status = 1")
 
                 connection.commit()
 
@@ -85,13 +86,11 @@ class recogModel():
                     "select model,latest from files f where id = 2 and latest > %s", (versionNames,))
                 if cursor.rowcount > 0:
                     names, newVersionNames = cursor.fetchone()
-                connection.commit()
 
-                cursor.close()
-                connection.close()
-                print(knnModel, names)
+            connection.commit()
+            connection.close()
 
-                return knnModel, newVersionKnn, names, newVersionNames
+            return knnModel, newVersionKnn, names, newVersionNames
 
         except Exception as ex:
             print(ex)

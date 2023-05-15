@@ -8,7 +8,7 @@ class BackgroundManager():
         print("starting background...")
         self.scheduler = BackgroundScheduler()
         #self.scheduler.add_job(daily_task, 'cron', day_of_week='mon-fri', hour=8)
-        self.scheduler.add_job(self.interval_task,'interval', seconds=30)
+        self.scheduler.add_job(self.interval_task,'interval', seconds=45)
         self.scheduler.start()
         self.manager = Manager()
         pass

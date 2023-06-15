@@ -20,6 +20,7 @@ class Manager():
         if (recogModel.checkForBuild()):
             self.buildModel()
         classModel.openClasses(self.today)
+        attendenceModel.cleanOldAtt()
         pass
 
     def manage(self):

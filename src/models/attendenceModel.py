@@ -1,5 +1,5 @@
 from database.db import getConnection
-from datetime import date
+from datetime import date,time
 from .entities.attendenceEntity import Attendence
 
 
@@ -10,6 +10,7 @@ class attendenceModel():
         try:
             connection = getConnection()
             today = date.today()
+
             with connection.cursor() as cursor:
 
                 cursor.execute(
@@ -54,6 +55,19 @@ class attendenceModel():
                 """
                 cursor.execute(query, (today, today, idClass,))
                 connection.commit()
+            connection.close()
+            return None
+        except Exception as ex:
+            print(ex)
+            raise Exception(ex)
+        
+    @classmethod
+    def cleanOldAtt(self):
+        try:
+            connection = getConnection()
+            with connection.cursor() as cursor:
+                cursor.execute("delete from attendances where att_date < Now() - interval '60 days'")
+            connection.commit()
             connection.close()
             return None
         except Exception as ex:

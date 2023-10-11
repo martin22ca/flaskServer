@@ -1,5 +1,4 @@
 from database.db import getConnection
-from .entities.messageEntity import Message
 
 
 class messageModel():

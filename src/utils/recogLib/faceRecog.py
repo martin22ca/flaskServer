@@ -5,7 +5,7 @@ import pickle
 import numpy as np
 import sklearn
 from collections import Counter
-from recogLib.utils import getAngle, getNewLocations, rotate_image, resizeAndPad
+from utils.recogLib.utils import getAngle, getNewLocations, rotate_image, resizeAndPad
 
 MODELSDIR = (__file__.split("faceRecog.py"))[0] + 'models/'
 

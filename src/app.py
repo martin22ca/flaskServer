@@ -1,14 +1,14 @@
-import uuid
 import socket
 from flask import Flask
+from flask_cors import CORS
 from config import config
-from managerLib.sheduler import BackgroundManager
-from zeroconf import Zeroconf, ServiceInfo
+from decouple import config as envConfig
+from utils.managerLib.sheduler import BackgroundManager
 
 # Routes
 from routes import attendeces, classroom, recog
-
 app = Flask(__name__)
+CORS(app) 
 
 
 def page_not_found(error):
@@ -16,15 +16,6 @@ def page_not_found(error):
 
 
 ip_address = socket.gethostbyname(socket.gethostname()+".local")
-info = ServiceInfo(
-    "_http._tcp.local.",
-    "flaskServer" + str(uuid.uuid4()) + "._http._tcp.local.",
-    addresses=[socket.inet_aton(ip_address)],
-    port=5001,
-)
-
-zeroconf = Zeroconf()
-zeroconf.register_service(info)
 
 if __name__ == '__main__':
     bSheduler = BackgroundManager()
@@ -37,4 +28,4 @@ if __name__ == '__main__':
 
     # Error handlers
     app.register_error_handler(404, page_not_found)
-    app.run(host="0.0.0.0", port=5000, use_reloader=False)
+    app.run(host="0.0.0.0", port=int(envConfig('FLASK_PORT')), use_reloader=False)

@@ -1,6 +1,6 @@
 import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
-from managerLib.manager import Manager
+from utils.managerLib.manager import Manager
 
 class BackgroundManager():
 

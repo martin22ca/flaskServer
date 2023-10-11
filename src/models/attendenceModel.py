@@ -1,6 +1,5 @@
 from database.db import getConnection
-from datetime import date,time
-from .entities.attendenceEntity import Attendence
+from datetime import date
 
 
 class attendenceModel():
@@ -16,7 +15,7 @@ class attendenceModel():
                 cursor.execute(
                     "select sc.status from students s inner join student_class sc ON s.id_student_class = sc.id  where s.id = %s", (idStudent,))
                 late = cursor.fetchone()[0]
-                late = not late 
+                late = not late
 
                 cursor.execute(
                     "SELECT id,id_student,att_date FROM attendances WHERE id_student = %s AND att_date = %s", (idStudent, today,))
@@ -36,40 +35,6 @@ class attendenceModel():
                     connection.close()
                     return 'Already marked'
 
-        except Exception as ex:
-            print(ex)
-            raise Exception(ex)
-
-    @classmethod
-    def closeAttendance(self, idClass, today):
-        try:
-            connection = getConnection()
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    "update student_class set status = false, close_date = %s where id = %s", (today, idClass,))
-
-                query = """insert into attendances (id_student,att_date,present)
-                SELECT s.id,%s,false FROM students s 
-                LEFT JOIN attendances a ON s.id = a.id_student and a.att_date = %s
-                WHERE s.id_student_class  = %s and a.id is null ;
-                """
-                cursor.execute(query, (today, today, idClass,))
-                connection.commit()
-            connection.close()
-            return None
-        except Exception as ex:
-            print(ex)
-            raise Exception(ex)
-        
-    @classmethod
-    def cleanOldAtt(self):
-        try:
-            connection = getConnection()
-            with connection.cursor() as cursor:
-                cursor.execute("delete from attendances where att_date < Now() - interval '60 days'")
-            connection.commit()
-            connection.close()
-            return None
         except Exception as ex:
             print(ex)
             raise Exception(ex)

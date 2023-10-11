@@ -5,15 +5,6 @@ from flask import Blueprint, jsonify, request
 from models.attendenceModel import attendenceModel
 
 main = Blueprint('attendeceBlueprint', __name__)
-
-@main.route('/',methods=['GET'])
-def getAttendences():
-    try:
-        students = attendenceModel.getAttendences()
-        return jsonify(students)
-    
-    except Exception as ex:
-        return jsonify({'message': str(ex)}), 500
     
 @main.route('/newAttendence',methods=['POST'])    
 def postNewAttendece():

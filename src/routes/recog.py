@@ -10,10 +10,22 @@ from models.messageModel import messageModel
 main = Blueprint('recogBlueprint', __name__)
 
 
+@main.route('/registerAi', methods=['POST'])
+def registerAi():
+    try:
+        req = request.json 
+        images = req['images']
+        idStud = req['idStud']
+        recogModel.registerEncodings(images,idStud)
+
+        return jsonify({'message': 'ok'}), 200
+    except Exception as ex:
+        return jsonify({'message': str(ex)}), 500
+
+
 @main.route('/update', methods=['GET'])
 def updateModels():
     try:
-        
         req = request.json
         classNumber = req['classNumber']
         className = req['className']
@@ -26,7 +38,7 @@ def updateModels():
         if knn == None and names == None:
             print("Models up to date")
             return jsonify({'message': 'OK'}), 200
-        
+
         print("Updating Models")
         response = make_response()
         response.headers['update'] = False

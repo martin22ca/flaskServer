@@ -1,7 +1,9 @@
 import os
 import cv2
 import pickle
-from recogLib.faceRecog import encodeFace, loadRecognitionModel
+from cryptography.fernet import Fernet
+from decouple import config as envConfig
+from utils.recogLib.faceRecog import encodeFace, loadRecognitionModel
 from requests import get
 from pathlib import Path
 from datetime import datetime, date
@@ -70,22 +72,21 @@ class Manager():
             print(e)
 
     def buildModel(self):
+        binaryKey = bytes(envConfig('TOKEN_FERNET'), 'utf-8')
+        f = Fernet(binaryKey)
         print("Builing New Model")
         modelR = loadRecognitionModel()
-        encodings = []
+        encrpytedData = recogModel.getEncodings()
         names = []
-        home = str(Path.home()) + '/students/'
+        encodings = []
 
-        for student in os.listdir(home):
-            idStud = int(student)
-            studPath = home + student + '/'
-
-            for pic in os.listdir(studPath):
-                img = cv2.imread(studPath+pic)
-                img = cv2.resize(img, (160, 160))
-                enco = encodeFace(img, modelR)
-                encodings.append(enco)
-                names.append(student)
+        for idStud, encryptedToken in encrpytedData:
+            studName = idStud
+            decryptedData = f.decrypt(encryptedToken.tobytes())
+            originalData = pickle.loads(decryptedData)
+            for i in originalData:
+                encodings.append(i)
+                names.append(studName)
 
         model = KNeighborsClassifier(
             n_neighbors=6, weights='distance', algorithm='ball_tree')
@@ -95,6 +96,7 @@ class Manager():
 
         recogModel.uploadFiles(model_pickle, names_pickle)
         recogModel.updateStatus()
+
         return None
 
 

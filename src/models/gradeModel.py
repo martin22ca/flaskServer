@@ -1,14 +1,27 @@
 from database.db import getConnection
 
-class classModel():
+
+class gradeModel():
 
     @classmethod
-    def openClasses(self,today):
+    def openGrades(self, today):
         try:
             connection = getConnection()
             with connection.cursor() as cursor:
 
-                cursor.execute("update student_class set status = true where close_date < %s", (today,))
+                cursor.execute(
+                    "select id from grade g where id not in(select id_grade from roll_call rc where att_date = %s)", (today,))
+                grades = cursor.fetchall()
+
+                for grade in grades:
+                    cursor.execute(
+                        "insert into roll_call (id_grade,att_date) values (%s,%s) RETURNING ID", (grade[0], str(today),))
+                    roll = cursor.fetchone()
+                    query = """ insert into attendances (id_recog,id_roll)  
+                    select id_recog ,%s from students s inner join personal_data pd on s.id_personal = pd.id  
+                    where s.id_grade = %s"""
+                    cursor.execute(query, (roll[0], grade[0],))
+
                 connection.commit()
                 connection.close()
 
@@ -18,10 +31,10 @@ class classModel():
             raise Exception(ex)
 
     @classmethod
-    def checkStatus(self,today):
+    def checkStatus(self, today):
         try:
             connection = getConnection()
-    
+
             with connection.cursor() as cursor:
 
                 query = """SELECT sc.id as sc,sc.status,sc.school_year,sc.school_section,sc.id_employee ,count(a.id) as present,count(s.id) as total 
@@ -37,4 +50,3 @@ class classModel():
         except Exception as ex:
             print(ex)
             raise Exception(ex)
-        

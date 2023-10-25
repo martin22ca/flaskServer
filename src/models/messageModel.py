@@ -14,7 +14,7 @@ class messageModel():
                 idMsg = cursor.fetchone()[0]
 
                 cursor.execute(
-                    "INSERT INTO messages_x_employees (id_message,id_employee) VALUES (%s,%s)", (
+                    "INSERT INTO users_messages (id_message,id_user) VALUES (%s,%s)", (
                         idMsg, idEmployee,)
                 )
             connection.commit()
@@ -30,15 +30,15 @@ class messageModel():
             connection = getConnection()
 
             with connection.cursor() as cursor:
-                cursor.execute("select id from  employees e where id_role = 2")
-                employees = cursor.fetchall()
-                for employee in employees:
-                    idEmployee = employee[0]
+                cursor.execute("select id from users u where id_role = 2")
+                users = cursor.fetchall()
+                for user in users:
+                    idUser = user[0]
                     cursor.execute(
                         "INSERT INTO messages (title,message , info) VALUES (%s,%s,%s) RETURNING ID", (title, txt, info,))
                     idMsg = cursor.fetchone()[0]
                     cursor.execute(
-                        "INSERT INTO messages_x_employees (id_message,id_employee) VALUES (%s,%s)", (idMsg, idEmployee,))
+                        "INSERT INTO users_messages (id_message,id_user) VALUES (%s,%s)", (idMsg, idUser,))
             connection.commit()
             connection.close()
 

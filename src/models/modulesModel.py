@@ -2,10 +2,10 @@ from database.db import getConnection
 import datetime
 
 
-class classroomModel():
+class modulesModel():
 
     @classmethod
-    def helloClassroom(self, ipClassroom, idClassroom=None):
+    def startup(self, ipClassroom, idClassroom=None):
         try:
             connection = getConnection()
             today = datetime.datetime.now()
@@ -13,7 +13,7 @@ class classroomModel():
             with connection.cursor() as cursor:
                 print('as')
                 cursor.execute(
-                    "update classrooms set ip_classroom = %s, status = true,last_online = %s where id = %s", (ipClassroom, today, idClassroom,))
+                    "update ai_modules set ip_module = %s, online = true, online_date = %s where id = %s", (ipClassroom, today, idClassroom,))
                 connection.commit()
                 connection.close()
 
@@ -23,14 +23,14 @@ class classroomModel():
             raise Exception(ex)
 
     @classmethod
-    def registerClassroom(self, classNumber, className, ipClassroom):
+    def register(self, moduleNumber, ipModule):
         try:
             connection = getConnection()
             today = datetime.datetime.now()
 
             with connection.cursor() as cursor:
-                cursor.execute("INSERT INTO classrooms (class_number,class_name,ip_classroom,last_online,status) VALUES (%s,%s,%s,%s,true) RETURNING ID", (
-                    classNumber, className, ipClassroom, today))
+                cursor.execute("INSERT INTO ai_modules (module_number ,ip_module ,online_date ,online) VALUES (%s,%s,%s,true) RETURNING ID", (
+                    moduleNumber, ipModule, today))
                 idClassroom = cursor.fetchone()[0]
                 connection.commit()
                 connection.close()

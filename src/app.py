@@ -6,7 +6,7 @@ from decouple import config as envConfig
 from utils.managerLib.sheduler import BackgroundManager
 
 # Routes
-from routes import attendeces, classroom, recog
+from routes import attendeces, modules, recog
 app = Flask(__name__)
 CORS(app) 
 
@@ -18,12 +18,12 @@ def page_not_found(error):
 ip_address = socket.gethostbyname(socket.gethostname()+".local")
 
 if __name__ == '__main__':
-    bSheduler = BackgroundManager()
+    b = BackgroundManager()
     app.config.from_object(config['development'])
 
     # Blueprints
     app.register_blueprint(attendeces.main, url_prefix='/attendece')
-    app.register_blueprint(classroom.main, url_prefix='/classroom')
+    app.register_blueprint(modules.main, url_prefix='/modules')
     app.register_blueprint(recog.main, url_prefix='/recog')
 
     # Error handlers

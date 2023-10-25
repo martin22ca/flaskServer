@@ -5,35 +5,25 @@ from datetime import date
 class attendenceModel():
 
     @classmethod
-    def createAttendence(self, idClassroom, idStudent, certainty, timeArrival, imgBytes):
+    def createAttendence(self, idModule, idRecog, certainty, arrival, imgBytes):
         try:
             connection = getConnection()
             today = date.today()
 
             with connection.cursor() as cursor:
+                query = """select a.id from attendances a inner join roll_call rc ON a.id_roll = rc.id  
+                inner join grade g on rc.id_grade = g.id  inner join students s on s.id_grade = g.id  
+                inner join personal_data pd on s.id_personal =pd.id  
+                where rc.att_date = %s and pd.id_recog = %s """
 
-                cursor.execute(
-                    "select sc.status from students s inner join student_class sc ON s.id_student_class = sc.id  where s.id = %s", (idStudent,))
-                late = cursor.fetchone()[0]
-                late = not late
-
-                cursor.execute(
-                    "SELECT id,id_student,att_date FROM attendances WHERE id_student = %s AND att_date = %s", (idStudent, today,))
+                cursor.execute(query, (str(today), idRecog))
                 alreadyIn = cursor.fetchone()
-                if alreadyIn == None:
-                    cursor.execute("INSERT INTO attendances (id_student,time_arrival,present,late,certainty,img_encoded,id_classroom,att_date) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
-                                   (idStudent, timeArrival, True, late, certainty, imgBytes, idClassroom, today,))
-                    connection.commit()
-                    connection.close()
-                    return 'New Attendence'
-                else:
-                    attId = alreadyIn[0]
-                    cursor.execute("UPDATE attendances SET time_arrival = %s,present =%s ,late =%s ,certainty = %s,img_encoded = %s where id = %s",
-                                   (timeArrival, True, late, certainty, imgBytes, attId,))
-                    connection.commit()
-
-                    connection.close()
-                    return 'Already marked'
+                attId = alreadyIn[0]
+                cursor.execute("UPDATE attendances SET arrival = %s,present = true ,certainty = %s,img_encoded = %s,id_module = %s where id = %s",
+                               (arrival, certainty, imgBytes, idModule, attId,))
+                connection.commit()
+                connection.close()
+                return 'Already marked'
 
         except Exception as ex:
             print(ex)

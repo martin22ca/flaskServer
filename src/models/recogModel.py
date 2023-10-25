@@ -20,9 +20,9 @@ class recogModel():
 
                 # Insert the pickled objects into the database
                 cursor.execute(
-                    "update files set model = %s, latest = latest + 1  where id = %s ", (Binary(model_pickle), 1,))
+                    "update models set model  = %s, model_version = model_version + 1  where id = 1", (Binary(model_pickle),))
                 cursor.execute(
-                    "update files set model = %s, latest = latest + 1  where id = %s ", (Binary(names_pickle), 2,))
+                    "update models set model  = %s, model_version = model_version + 1  where id = 2", (Binary(names_pickle),))
                 connection.commit()
 
                 cursor.close()
@@ -43,7 +43,7 @@ class recogModel():
             connection = getConnection()
             with connection.cursor() as cursor:
 
-                cursor.execute("select * from ai_data r where r.id_status = 2")
+                cursor.execute("select id from recognition r where id_state = 2")
 
                 connection.commit()
                 connection.close()
@@ -63,7 +63,7 @@ class recogModel():
             with connection.cursor() as cursor:
 
                 cursor.execute(
-                    "update ai_data set id_status = 3 where id_status = 2")
+                    "update recognition set id_state = 1 where id_state = 2")
 
                 connection.commit()
 
@@ -82,7 +82,7 @@ class recogModel():
             with connection.cursor() as cursor:
 
                 cursor.execute(
-                    "select s.id,ad.encodings from students s inner join ai_data ad ON s.id_data = ad.id ")
+                    "select id,encodings from recognition r where encodings is not null")
                 resultset = cursor.fetchall()
 
                 cursor.close()
@@ -105,11 +105,11 @@ class recogModel():
             with connection.cursor() as cursor:
                 # Insert the pickled objects into the database
                 cursor.execute(
-                    "select model,latest from files f where id = 1 and latest > %s", (versionKnn,))
+                    "select model ,model_version from models m where id = 1 and model_version > %s", (versionKnn,))
                 if cursor.rowcount > 0:
                     knnModel, newVersionKnn = cursor.fetchone()
                 cursor.execute(
-                    "select model,latest from files f where id = 2 and latest > %s", (versionNames,))
+                    "select model ,model_version from models m where id = 2 and model_version > %s", (versionNames,))
                 if cursor.rowcount > 0:
                     names, newVersionNames = cursor.fetchone()
 
@@ -143,16 +143,9 @@ class recogModel():
             binary_data = pickle.dumps(encodings)
             token = f.encrypt(data=binary_data)
             with connection.cursor() as cursor:
-                cursor.execute('select id_data from students s where id = %s',(idStud,))
-                existAiData = cursor.fetchone()[0]
-                if existAiData != None:
-                    print(existAiData)
-                    idAi = existAiData
-                    cursor.execute('update ai_data set id_status = %s ,encodings = %s where id = %s', (2,token,idAi,))
-                else:
-                    cursor.execute('INSERT INTO ai_data (id_status,encodings) values (%s,%s) returning ID', (2,token,))
-                    idAi = cursor.fetchone()[0]
-                    cursor.execute('update students set id_data = %s where id = %s',(idAi,idStud,))
+                cursor.execute('select id_recog from students s inner join personal_data pd on s.id_personal = pd.id where s.id = %s',(idStud,))
+                idAi = cursor.fetchone()[0]
+                cursor.execute('update recognition set id_state = %s ,encodings = %s where id = %s', (2,token,idAi,))
 
                 connection.commit()
                 cursor.close()
